@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⭐ StarShop — La boutique des célébrités</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f5f4f0;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #fff;
+    border-bottom: 1px solid #e0ddd6;
+    padding: 1.2rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #534AB7;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span {
+    background: #EEEDFE;
+    color: #3C3489;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+
+  .cart-icon {
+    background: #534AB7;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+  .cart-icon:hover { background: #3C3489; }
+
+  .cart-badge {
+    background: #D85A30;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    background: linear-gradient(135deg, #EEEDFE 0%, #E1F5EE 100%);
+    border-bottom: 1px solid #ddd;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #3C3489;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero p {
+    color: #5F5E5A;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .promo-banner {
+    display: inline-block;
+    background: #D85A30;
+    color: white;
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  main {
+    max-width: 1000px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e0ddd6;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 20px;
+  }
+
+  /* === CARTE === */
+  .card {
+    background: #fff;
+    border: 1px solid #e0ddd6;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  }
+
+  /* === ZONE IMAGE AVEC SLIDER === */
+  .card-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-img.sabrina { background: linear-gradient(135deg, #EEEDFE, #FAECE7); }
+  .card-img.nina    { background: linear-gradient(135deg, #E1F5EE, #E6F1FB); }
+  .card-img.demi    { background: linear-gradient(135deg, #FBEAF0, #FAEEDA); }
+
+  /* Image principale */
+  .slide-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.25s ease;
+  }
+
+  /* Placeholder emoji quand pas d'image */
+  .img-placeholder {
+    font-size: 6rem;
+    user-select: none;
+    transition: opacity 0.25s ease;
+  }
+
+  /* Flèches de navigation */
+  .arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.85);
+    border: none;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, opacity 0.15s;
+    opacity: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .card-img:hover .arrow { opacity: 1; }
+  .arrow:hover { background: white; }
+  .arrow.left  { left: 8px; }
+  .arrow.right { right: 8px; }
+
+  /* Indicateur de points */
+  .dots {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 10;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .dot.active { background: white; }
+
+  /* Badge tag */
+  .card-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  .tag-purple { background: #EEEDFE; color: #3C3489; }
+  .tag-teal   { background: #E1F5EE; color: #085041; }
+  .tag-coral  { background: #FAECE7; color: #993C1D; }
+
+  /* Compteur d'images */
+  .img-counter {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.45);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    z-index: 10;
+  }
+  .btn-settings {
+	background: transparent;
+	border: 1px solid #e0ddd6;
+	border-radius: 8px;
+	width: 36px;
+	height: 36px;
+	font-size: 1.2rem;
+	cursor: pointer;
+	color: #888;
+	transition: background 0.15s;
+	}
+.btn-settings:hover { background: #f0ece6; color: #333; }
+
+  /* === CORPS DE CARTE === */
+  .card-body {
+    padding: 1.2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .stars { color: #BA7517; font-size: 0.85rem; }
+  .reviews { font-size: 0.75rem; color: #888; margin-left: 4px; }
+
+  .card-desc {
+    font-size: 0.82rem;
+    color: #5F5E5A;
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f0ece6;
+  }
+
+  .price-block .old { font-size: 0.75rem; color: #bbb; text-decoration: line-through; }
+  .price-block .new { font-size: 1.3rem; font-weight: 800; color: #534AB7; }
+
+  .btn-add {
+    background: #534AB7;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 18px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-add:hover { background: #3C3489; }
+  .btn-add:active { transform: scale(0.97); }
+  .btn-add.added { background: #0F6E56; }
+
+  /* === SECTION AJOUTER DES PHOTOS === */
+  .upload-section {
+    margin-top: 3rem;
+    background: #fff;
+    border: 1px dashed #b0adff;
+    border-radius: 16px;
+    padding: 2rem;
+  }
+
+  .upload-section h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #534AB7;
+    margin-bottom: 0.4rem;
+  }
+
+  .upload-section p {
+    font-size: 0.82rem;
+    color: #888;
+    margin-bottom: 1.5rem;
+  }
+
+  .upload-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .upload-card {
+    border: 1px solid #e0ddd6;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .upload-card h3 {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .upload-card label {
+    display: inline-block;
+    background: #EEEDFE;
+    color: #3C3489;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .upload-card label:hover { background: #d5d2f8; }
+  .upload-card input[type="file"] { display: none; }
+
+  .upload-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+    justify-content: center;
+  }
+
+  .upload-preview img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #e0ddd6;
+  }
+
+  .upload-count {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 6px;
+  }
+
+  /* === MODALS === */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+  }
+  .modal-bg.open { display: flex; }
+
+  .modal {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 420px;
+    width: 90%;
+    text-align: left;
+  }
+
+  .modal h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #1a1a1a;
+  }
+
+  .modal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0ece6;
+    font-size: 0.9rem;
+  }
+
+  .modal-item:last-child { border-bottom: none; }
+  .modal-item .item-name { color: #333; font-weight: 500; }
+  .modal-item .item-price { color: #534AB7; font-weight: 700; }
+
+  .modal-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 12px 0 0;
+    border-top: 2px solid #eee;
+    margin-top: 4px;
+  }
+
+  .modal-empty {
+    color: #888;
+    text-align: center;
+    padding: 2rem 0;
+    font-size: 0.95rem;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+  }
+
+  .btn-modal-close {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: #555;
+  }
+  .btn-modal-close:hover { background: #f5f4f0; }
+
+  .btn-modal-order {
+    flex: 2;
+    background: #534AB7;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+  .btn-modal-order:hover { background: #3C3489; }
+
+  .modal-confirm { text-align: center; }
+  .modal-confirm .emoji-big { font-size: 3.5rem; display: block; margin-bottom: 1rem; }
+  .modal-confirm h2 { text-align: center; margin-bottom: 0.75rem; }
+  .modal-confirm p { font-size: 0.9rem; color: #555; line-height: 1.7; margin-bottom: 0.5rem; }
+  .modal-confirm .highlight { font-weight: 700; color: #D85A30; }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.78rem;
+    color: #aaa;
+    border-top: 1px solid #e0ddd6;
+    margin-top: 3rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <button class="btn-settings" onclick="toggleUpload()" title="Paramètres">⋯</button>
+    <div class="logo">⭐ StarShop <span>SOLDES</span></div>
+  </div>
+
+  <button class="cart-icon" onclick="openCart()">
+    🛒 Panier <span class="cart-badge" id="cart-badge">0</span>
+  </button>
+</header>
+
+<div class="hero">
+  <h1>La boutique des célébrités ✨</h1>
+  <p>Les meilleures stars du moment, disponibles à prix cassés</p>
+  <span class="promo-banner">🔥 SOLDES JUSQU'À -99,9999%</span>
+</div>
+
+<main>
+  <div class="section-title">🌟 Nos produits phares</div>
+
+  <div class="grid">
+
+    <!-- SABRINA CARPENTER -->
+    <div class="card">
+      <div class="card-img sabrina" id="zone-sabrina">
+        <span class="img-placeholder" id="placeholder-sabrina">🎤</span>
+        <img class="slide-img" id="img-sabrina" src="" alt="Sabrina Carpenter" style="display:none; position:absolute; inset:0; width:100%; height:100%;">
+        <button class="arrow left"  onclick="prevImg('sabrina')">&#8249;</button>
+        <button class="arrow right" onclick="nextImg('sabrina')">&#8250;</button>
+        <div class="dots" id="dots-sabrina"></div>
+        <div class="img-counter" id="counter-sabrina" style="display:none">1 / 1</div>
+        <span class="card-tag tag-purple">Édition limitée</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Sabrina Carpenter</div>
+        <div><span class="stars">★★★★★</span><span class="reviews">(2 847 avis)</span></div>
+        <div class="card-desc">Modèle 2024. Chante, danse, et envoie des messages vocaux spontanément. Compatible avec toutes les soirées. Livraison express depuis Los Angeles. Non remboursable.</div>
+        <div class="card-footer">
+          <div class="price-block">
+            <div class="old">5 000 000 €</div>
+            <div class="new">3,00 €</div>
+          </div>
+          <button class="btn-add" id="btn1" onclick="addToCart('btn1', 3.00, 'Sabrina Carpenter')">🛒 Ajouter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NINA DOBREV -->
+    <div class="card">
+      <div class="card-img nina" id="zone-nina">
+        <span class="img-placeholder" id="placeholder-nina">🎬</span>
+        <img class="slide-img" id="img-nina" src="" alt="Nina Dobrev" style="display:none; position:absolute; inset:0; width:100%; height:100%;">
+        <button class="arrow left"  onclick="prevImg('nina')">&#8249;</button>
+        <button class="arrow right" onclick="nextImg('nina')">&#8250;</button>
+        <div class="dots" id="dots-nina"></div>
+        <div class="img-counter" id="counter-nina" style="display:none">1 / 1</div>
+        <span class="card-tag tag-teal">Best-seller</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Nina Dobrev (jeune)</div>
+        <div><span class="stars">★★★★★</span><span class="reviews">(18 002 avis)</span></div>
+        <div class="card-desc">Version vintage circa Vampire Diaries. Peut jouer plusieurs personnages simultanément. Attention : mord légèrement si contrariée. Chargeur non inclus.</div>
+        <div class="card-footer">
+          <div class="price-block">
+            <div class="old">8 000 000 €</div>
+            <div class="new">2,50 €</div>
+          </div>
+          <button class="btn-add" id="btn2" onclick="addToCart('btn2', 2.50, 'Nina Dobrev (jeune)')">🛒 Ajouter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMITRA KALOGERAS -->
+    <div class="card">
+      <div class="card-img demi" id="zone-demi">
+        <span class="img-placeholder" id="placeholder-demi">📱</span>
+        <img class="slide-img" id="img-demi" src="" alt="Demitra Kalogeras" style="display:none; position:absolute; inset:0; width:100%; height:100%;">
+        <button class="arrow left"  onclick="prevImg('demi')">&#8249;</button>
+        <button class="arrow right" onclick="nextImg('demi')">&#8250;</button>
+        <div class="dots" id="dots-demi"></div>
+        <div class="img-counter" id="counter-demi" style="display:none">1 / 1</div>
+        <span class="card-tag tag-coral">Nouveau</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Demitra Kalogeras</div>
+        <div><span class="stars">★★★★☆</span><span class="reviews">(94 312 avis)</span></div>
+        <div class="card-desc">Livrée avec ses propres idées de contenu TikTok. Réagit positivement aux gâteaux et aux chats. Batterie incluse, chargeur vendu séparément. Peut danser sans prévenir.</div>
+        <div class="card-footer">
+          <div class="price-block">
+            <div class="old">1 200 000 €</div>
+            <div class="new">1,99 €</div>
+          </div>
+          <button class="btn-add" id="btn3" onclick="addToCart('btn3', 1.99, 'Demitra Kalogeras')">🛒 Ajouter</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SECTION UPLOAD PHOTOS -->
+  <!-- Bouton discret en haut à droite, à côté du panier dans le header -->
+  <div class="upload-section" id="upload-panel" style="display:none">
+	<button class="btn-settings" onclick="toggleUpload()" title="Paramètres">⋯</button>
+    <h2>📸 Ajouter tes photos personnalisées</h2>
+    <p>Sélectionne plusieurs photos pour chaque célébrité — les flèches apparaissent automatiquement.</p>
+    <div class="upload-grid">
+
+      <div class="upload-card">
+        <h3>🎤 Sabrina Carpenter</h3>
+        <label for="upload-sabrina">+ Choisir des photos</label>
+        <input type="file" id="upload-sabrina" accept="image/*" multiple onchange="loadImages('sabrina', this)">
+        <div class="upload-preview" id="preview-sabrina"></div>
+        <div class="upload-count" id="count-sabrina"></div>
+      </div>
+
+      <div class="upload-card">
+        <h3>🎬 Nina Dobrev</h3>
+        <label for="upload-nina">+ Choisir des photos</label>
+        <input type="file" id="upload-nina" accept="image/*" multiple onchange="loadImages('nina', this)">
+        <div class="upload-preview" id="preview-nina"></div>
+        <div class="upload-count" id="count-nina"></div>
+      </div>
+
+      <div class="upload-card">
+        <h3>📱 Demitra Kalogeras</h3>
+        <label for="upload-demi">+ Choisir des photos</label>
+        <input type="file" id="upload-demi" accept="image/*" multiple onchange="loadImages('demi', this)">
+        <div class="upload-preview" id="preview-demi"></div>
+        <div class="upload-count" id="count-demi"></div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- MODAL PANIER -->
+<div class="modal-bg" id="modal-cart">
+  <div class="modal">
+    <h2>🛒 Mon panier</h2>
+    <div id="modal-items"><div class="modal-empty">Votre panier est vide.<br>Ajoutez une célébrité !</div></div>
+    <div class="modal-total" id="modal-total" style="display:none">
+      <span>Total</span>
+      <span id="modal-total-price">0,00 €</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-close" onclick="closeCart()">Fermer</button>
+      <button class="btn-modal-order" onclick="commander()">Commander 🎉</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMATION -->
+<div class="modal-bg" id="modal-confirm">
+  <div class="modal modal-confirm">
+    <span class="emoji-big">🎉</span>
+    <h2>Commande confirmée !</h2>
+    <p>Articles commandés : <span class="highlight" id="confirm-items"></span></p>
+    <p>Montant débité : <span class="highlight" id="confirm-total"></span></p>
+    <p style="margin-top:1rem">Livraison prévue : <strong>jamais</strong> 🙃<br>Raison : <strong>ce site est une blague 😂</strong></p>
+    <div class="modal-actions">
+      <button class="btn-modal-order" onclick="closeAll()" style="flex:1">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // =====================
+  //   GALERIES D'IMAGES
+  // =====================
+  const galleries = {
+    sabrina: { imgs: [], idx: 0 },
+    nina:    { imgs: [], idx: 0 },
+    demi:    { imgs: [], idx: 0 },
+  };
+
+  function loadImages(key, input) {
+    const files = Array.from(input.files);
+    if (files.length === 0) return;
+
+    const g = galleries[key];
+    g.imgs = [];
+    g.idx = 0;
+
+    let loaded = 0;
+    files.forEach((file, i) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        g.imgs[i] = e.target.result;
+        loaded++;
+        if (loaded === files.length) {
+          showImage(key, 0);
+          renderDots(key);
+          renderPreview(key, files);
+          document.getElementById('count-' + key).textContent =
+            files.length + ' photo' + (files.length > 1 ? 's' : '') + ' chargée' + (files.length > 1 ? 's' : '');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function showImage(key, idx) {
+    const g = galleries[key];
+    const imgEl = document.getElementById('img-' + key);
+    const placeholder = document.getElementById('placeholder-' + key);
+    const counter = document.getElementById('counter-' + key);
+
+    imgEl.style.opacity = '0';
+    setTimeout(() => {
+      imgEl.src = g.imgs[idx];
+      imgEl.style.display = 'block';
+      imgEl.style.opacity = '1';
+      placeholder.style.display = 'none';
+    }, 100);
+
+    if (g.imgs.length > 1) {
+      counter.style.display = 'block';
+      counter.textContent = (idx + 1) + ' / ' + g.imgs.length;
+    } else {
+      counter.style.display = 'none';
+    }
+
+    updateDots(key, idx);
+  }
+
+  function nextImg(key) {
+    const g = galleries[key];
+    if (g.imgs.length === 0) return;
+    g.idx = (g.idx + 1) % g.imgs.length;
+    showImage(key, g.idx);
+  }
+
+  function prevImg(key) {
+    const g = galleries[key];
+    if (g.imgs.length === 0) return;
+    g.idx = (g.idx - 1 + g.imgs.length) % g.imgs.length;
+    showImage(key, g.idx);
+  }
+
+  // =====================
+  //        DOTS
+  // =====================
+  function renderDots(key) {
+    const g = galleries[key];
+    const container = document.getElementById('dots-' + key);
+    container.innerHTML = '';
+    if (g.imgs.length <= 1) return;
+    g.imgs.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => { g.idx = i; showImage(key, i); };
+      container.appendChild(dot);
+    });
+  }
+
+  function updateDots(key, activeIdx) {
+    const dots = document.querySelectorAll('#dots-' + key + ' .dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === activeIdx));
+  }
+
+  function renderPreview(key, files) {
+    const container = document.getElementById('preview-' + key);
+    container.innerHTML = '';
+    files.slice(0, 6).forEach((file, i) => {
+      const img = document.createElement('img');
+      img.src = galleries[key].imgs[i];
+      img.title = file.name;
+      img.onclick = () => { galleries[key].idx = i; showImage(key, i); };
+      img.style.cursor = 'pointer';
+      container.appendChild(img);
+    });
+    if (files.length > 6) {
+      const more = document.createElement('div');
+      more.style.cssText = 'font-size:0.75rem;color:#888;align-self:center';
+      more.textContent = '+' + (files.length - 6) + ' autres';
+      container.appendChild(more);
+    }
+  }
+
+  // =====================
+  //        PANIER
+  // =====================
+  let cart = [];
+  let total = 0;
+
+  function addToCart(btnId, price, name) {
+    cart.push({ name, price });
+    total += price;
+    const btn = document.getElementById(btnId);
+    btn.textContent = '✅ Ajouté';
+    btn.classList.add('added');
+    btn.disabled = true;
+    document.getElementById('cart-badge').textContent = cart.length;
+  }
+
+  function openCart() {
+    const itemsDiv = document.getElementById('modal-items');
+    const totalDiv = document.getElementById('modal-total');
+
+    if (cart.length === 0) {
+      itemsDiv.innerHTML = '<div class="modal-empty">Votre panier est vide.<br>Ajoutez une célébrité !</div>';
+      totalDiv.style.display = 'none';
+    } else {
+      itemsDiv.innerHTML = cart.map(item =>
+        `<div class="modal-item">
+          <span class="item-name">${item.name}</span>
+          <span class="item-price">${item.price.toFixed(2)} €</span>
+        </div>`
+      ).join('');
+      totalDiv.style.display = 'flex';
+      document.getElementById('modal-total-price').textContent = total.toFixed(2) + ' €';
+    }
+    document.getElementById('modal-cart').classList.add('open');
+  }
+
+  function closeCart() {
+    document.getElementById('modal-cart').classList.remove('open');
+  }
+
+  function commander() {
+    if (cart.length === 0) return;
+    document.getElementById('confirm-items').textContent = cart.map(i => i.name).join(', ');
+    document.getElementById('confirm-total').textContent = total.toFixed(2) + ' €';
+    document.getElementById('modal-cart').classList.remove('open');
+    document.getElementById('modal-confirm').classList.add('open');
+  }
+
+  function closeAll() {
+    document.getElementById('modal-confirm').classList.remove('open');
+  }
+
+  document.getElementById('modal-cart').addEventListener('click', function(e) {
+    if (e.target === this) closeCart();
+  });
+  document.getElementById('modal-confirm').addEventListener('click', function(e) {
+    if (e.target === this) closeAll();
+  });
+  function toggleUpload() {
+  const panel = document.getElementById('upload-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  }
+</script>
+
+</body>
+</html>
