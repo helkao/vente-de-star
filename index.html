@@ -167,6 +167,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+	object-position: center top;
     display: block;
     transition: opacity 0.25s ease;
   }
@@ -672,7 +673,7 @@
     <h2>Commande confirmée !</h2>
     <p>Articles commandés : <span class="highlight" id="confirm-items"></span></p>
     <p>Montant débité : <span class="highlight" id="confirm-total"></span></p>
-    <p style="margin-top:1rem">Livraison prévue : <strong>jamais</strong> 🙃<br>Raison : <strong>ce site est une blague 😂</strong></p>
+    <p style="margin-top:1rem">Livraison prévue : <strong>jamais malheureusement </strong> 🙃<br>Raison : <strong>c'est illegal d'acheter des humains et surtout j'ai et je n'aurais jamais le niveau pour de tel beauter</strong></p>
     <div class="modal-actions">
       <button class="btn-modal-order" onclick="closeAll()" style="flex:1">Fermer</button>
     </div>
@@ -686,7 +687,7 @@
   const galleries = {
     sabrina: { imgs: ["images/Sabrina1.jpg", "images/Sabrina2.jpg","images/Sabrina3.jpg", "images/Sabrina4.jpg"], idx: 0 },
     nina:    { imgs: ["images/Nina1.jpg", "images/Nina2.jpg","images/Nina3.jpg", "images/Nina4.jpg"], idx: 0 },
-    demi:    { imgs: ["images/Demitra1.jpg", "images/demitra2.jpg","images/Demitra3.jpg", "images/Demitra4.jpg"], idx: 0 },
+    demi:    { imgs: ["images/Demitra1.jpg", "images/Demitra2.jpg","images/Demitra3.jpg", "images/Demitra4.jpg"], idx: 0 },
   };
   window.onload = function() {
     ['sabrina', 'nina', 'demi'].forEach(key => {
