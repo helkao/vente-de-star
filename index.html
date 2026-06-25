@@ -644,14 +644,12 @@
 </div>
 
 <script>
-  // =====================
-  //   GALERIES D'IMAGES
-  // =====================
   const galleries = {
-    sabrina: { imgs: ["images/Sabrina1.jpg", "images/Sabrina2.jpg","images/Sabrina3.jpg", "images/Sabrina4.jpg"],pos: ["left center", "center center", "center center", "center center"], idx: 0 },
-    nina:    { imgs: ["images/Nina1.jpg", "images/Nina2.jpg","images/Nina3.jpg", "images/Nina4.jpg"],pos: ["center center", "center center", "center center", "center top"], idx: 0 },
-    demi:    { imgs: ["images/Demitra1.jpg", "images/Demitra2.jpg","images/Demitra3.jpg", "images/Demitra4.jpg"],pos: ["center center", "center center", "center center", "center center"], idx: 0 },
+    sabrina: { imgs: ["images/Sabrina1.jpg", "images/Sabrina2.jpg","images/Sabrina3.jpg", "images/Sabrina4.jpg"], pos: ["left center", "center center", "center center", "center center"], idx: 0 },
+    nina:    { imgs: ["images/Nina1.jpg", "images/Nina2.jpg","images/Nina3.jpg", "images/Nina4.jpg"], pos: ["center center", "center center", "center center", "center top"], idx: 0 },
+    demi:    { imgs: ["images/Demitra1.jpg", "images/Demitra2.jpg","images/Demitra3.jpg", "images/Demitra4.jpg"], pos: ["center center", "center center", "center center", "center center"], idx: 0 },
   };
+
   window.onload = function() {
     ['sabrina', 'nina', 'demi'].forEach(key => {
       if (galleries[key].imgs.length > 0) {
@@ -664,11 +662,9 @@
   function loadImages(key, input) {
     const files = Array.from(input.files);
     if (files.length === 0) return;
-
     const g = galleries[key];
     g.imgs = [];
     g.idx = 0;
-
     let loaded = 0;
     files.forEach((file, i) => {
       const reader = new FileReader();
@@ -692,23 +688,20 @@
     const imgEl = document.getElementById('img-' + key);
     const placeholder = document.getElementById('placeholder-' + key);
     const counter = document.getElementById('counter-' + key);
-
     imgEl.style.opacity = '0';
     setTimeout(() => {
       imgEl.src = g.imgs[idx];
-	  imgEl.style.objectPosition = g.pos[idx];
+      imgEl.style.objectPosition = g.pos[idx];
       imgEl.style.display = 'block';
       imgEl.style.opacity = '1';
       placeholder.style.display = 'none';
     }, 100);
-
     if (g.imgs.length > 1) {
       counter.style.display = 'block';
       counter.textContent = (idx + 1) + ' / ' + g.imgs.length;
     } else {
       counter.style.display = 'none';
     }
-
     updateDots(key, idx);
   }
 
@@ -726,9 +719,6 @@
     showImage(key, g.idx);
   }
 
-  // =====================
-  //        DOTS
-  // =====================
   function renderDots(key) {
     const g = galleries[key];
     const container = document.getElementById('dots-' + key);
@@ -766,36 +756,28 @@
     }
   }
 
-  // =====================
-  //        PANIER
-  // =====================
   let cart = [];
   let total = 0;
 
   function addToCart(btnId, price, name) {
-  const btn = document.getElementById(btnId);
-  
-  if (btn.classList.contains('added')) {
-    // Retirer du panier
-    cart = cart.filter(item => item.name !== name);
-    total -= price;
-    btn.textContent = '🛒 Ajouter';
-    btn.classList.remove('added');
-    btn.disabled = false;
-  } else {
-    // Ajouter au panier
-    cart.push({ name, price });
-    total += price;
-    btn.textContent = '✅ Ajouté';
-    btn.classList.add('added');
+    const btn = document.getElementById(btnId);
+    if (btn.classList.contains('added')) {
+      cart = cart.filter(item => item.name !== name);
+      total -= price;
+      btn.textContent = '🛒 Ajouter';
+      btn.classList.remove('added');
+    } else {
+      cart.push({ name, price });
+      total += price;
+      btn.textContent = '✅ Ajouté';
+      btn.classList.add('added');
+    }
+    document.getElementById('cart-badge').textContent = cart.length;
   }
-  
-  document.getElementById('cart-badge').textContent = cart.length;
 
   function openCart() {
     const itemsDiv = document.getElementById('modal-items');
     const totalDiv = document.getElementById('modal-total');
-
     if (cart.length === 0) {
       itemsDiv.innerHTML = '<div class="modal-empty">Votre panier est vide.<br>Ajoutez une célébrité !</div>';
       totalDiv.style.display = 'none';
@@ -803,11 +785,11 @@
       itemsDiv.innerHTML = cart.map(item =>
         `<div class="modal-item">
           <span class="item-name">${item.name}</span>
-          <span class="item-price">${item.price.toFixed(2)} €</span>
+          <span class="item-price">${item.price.toLocaleString('fr-FR')} €</span>
         </div>`
       ).join('');
       totalDiv.style.display = 'flex';
-      document.getElementById('modal-total-price').textContent = total.toFixed(2) + ' €';
+      document.getElementById('modal-total-price').textContent = total.toLocaleString('fr-FR') + ' €';
     }
     document.getElementById('modal-cart').classList.add('open');
   }
@@ -819,7 +801,7 @@
   function commander() {
     if (cart.length === 0) return;
     document.getElementById('confirm-items').textContent = cart.map(i => i.name).join(', ');
-    document.getElementById('confirm-total').textContent = total.toFixed(2) + ' €';
+    document.getElementById('confirm-total').textContent = total.toLocaleString('fr-FR') + ' €';
     document.getElementById('modal-cart').classList.remove('open');
     document.getElementById('modal-confirm').classList.add('open');
   }
@@ -828,17 +810,17 @@
     document.getElementById('modal-confirm').classList.remove('open');
   }
 
+  function toggleUpload() {
+    const panel = document.getElementById('upload-panel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  }
+
   document.getElementById('modal-cart').addEventListener('click', function(e) {
     if (e.target === this) closeCart();
   });
   document.getElementById('modal-confirm').addEventListener('click', function(e) {
     if (e.target === this) closeAll();
   });
-  function toggleUpload() {
-  const panel = document.getElementById('upload-panel');
-  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-  }
 </script>
-
 </body>
 </html>
