@@ -688,6 +688,14 @@
     nina:    { imgs: ["images/Nina1.jpg", "images/Nina2.jpg","images/Nina3.jpg", "images/Nina4.jpg"], idx: 0 },
     demi:    { imgs: ["images/Demitra1.jpg", "images/demitra2.jpg","images/Demitra3.jpg", "images/Demitra4.jpg"], idx: 0 },
   };
+  window.onload = function() {
+    ['sabrina', 'nina', 'demi'].forEach(key => {
+      if (galleries[key].imgs.length > 0) {
+        showImage(key, 0);
+        renderDots(key);
+      }
+    });
+  };
 
   function loadImages(key, input) {
     const files = Array.from(input.files);
