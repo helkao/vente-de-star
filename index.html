@@ -612,41 +612,6 @@
 
   </div>
 
-  <!-- SECTION UPLOAD PHOTOS -->
-  <!-- Bouton discret en haut à droite, à côté du panier dans le header -->
-  <div class="upload-section" id="upload-panel" style="display:none">
-	<button class="btn-settings" onclick="toggleUpload()" title="Paramètres">⋯</button>
-    <h2>📸 Ajouter tes photos personnalisées</h2>
-    <p>Sélectionne plusieurs photos pour chaque célébrité — les flèches apparaissent automatiquement.</p>
-    <div class="upload-grid">
-
-      <div class="upload-card">
-        <h3>🎤 Sabrina Carpenter</h3>
-        <label for="upload-sabrina">+ Choisir des photos</label>
-        <input type="file" id="upload-sabrina" accept="image/*" multiple onchange="loadImages('sabrina', this)">
-        <div class="upload-preview" id="preview-sabrina"></div>
-        <div class="upload-count" id="count-sabrina"></div>
-      </div>
-
-      <div class="upload-card">
-        <h3>🎬 Nina Dobrev</h3>
-        <label for="upload-nina">+ Choisir des photos</label>
-        <input type="file" id="upload-nina" accept="image/*" multiple onchange="loadImages('nina', this)">
-        <div class="upload-preview" id="preview-nina"></div>
-        <div class="upload-count" id="count-nina"></div>
-      </div>
-
-      <div class="upload-card">
-        <h3>📱 Demitra Kalogeras</h3>
-        <label for="upload-demi">+ Choisir des photos</label>
-        <input type="file" id="upload-demi" accept="image/*" multiple onchange="loadImages('demi', this)">
-        <div class="upload-preview" id="preview-demi"></div>
-        <div class="upload-count" id="count-demi"></div>
-      </div>
-
-    </div>
-  </div>
-
 </main>
 
 <!-- MODAL PANIER -->
